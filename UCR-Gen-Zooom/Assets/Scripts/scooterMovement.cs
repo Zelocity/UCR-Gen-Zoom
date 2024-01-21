@@ -37,7 +37,6 @@ public class scooterMovement : MonoBehaviour
     {
 
         angleZ = VisualBody.transform.localRotation.z;
-        Debug.LogWarning(angleZ);
         if (Input.GetKey("w"))
         {
             RB.velocity += transform.forward * 150 * Time.deltaTime;
