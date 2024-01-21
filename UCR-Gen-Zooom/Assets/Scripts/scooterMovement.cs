@@ -1,13 +1,14 @@
 using UnityEngine;
 
-public class Scooter : MonoBehaviour
+public class scooterMovement : MonoBehaviour
 {
     [SerializeField] float motorTorque, brakeTorque, maxSteeringAngle, maxSpeed, motorcycleRotation;
 
     [SerializeField] WheelCollider frontWheelCollider, backWheelCollider;
 
     Rigidbody rb;
- 
+
+    float steeringAngle = 0;
     public static bool isAccelerating, isBraking, isTurningLeft, isTurningRight, isDoingStop;
     void Start()
     {
@@ -16,30 +17,47 @@ public class Scooter : MonoBehaviour
 
     void Update()
     {
-        if (isAccelerating)
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+        if (verticalInput == 0 && horizontalInput ==0 )
+        {
+            rb.velocity = Vector3.zero;
+        }
+
+        //if vertical input is positive (w, up, forward), the scooter accelerates
+        if (verticalInput > 0)
         {
             backWheelCollider.motorTorque = Mathf.Clamp(motorTorque, -maxSpeed, maxSpeed);
-        }
-        else
+        } 
+        else 
         {
             backWheelCollider.motorTorque = 0;
         }
 
-        if (isBraking)
+        //if vertical input is negative (s, down, backwards), the scooter brakes
+        if (verticalInput < 0)
         {
+            Debug.LogWarning("BRAKE");
             frontWheelCollider.brakeTorque = 0;
             backWheelCollider.brakeTorque = 0;
+            
         }
 
-        float steeringAngle = 0;
+       
 
-        if (isTurningLeft)
+        //if horizontal input is negative (left), the scooter goes left
+        if (horizontalInput < 0)
         {
             steeringAngle = -maxSteeringAngle;
         }
-        else if (isTurningRight) {
+        //if horizontal input is positive (right), the scooter goes right
+        else if (horizontalInput > 0) {
             steeringAngle = maxSteeringAngle;
+        } else
+        {
+            steeringAngle = 0;
         }
+
         frontWheelCollider.steerAngle = steeringAngle;
         if (isDoingStop)
         {
